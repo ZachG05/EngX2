@@ -26,11 +26,13 @@ npm install
 
 ### 2. Set up environment variables
 
-```bash
-cp .env.example .env.local
-```
+Create `.env.local` in the project root with your Supabase credentials:
 
-Edit `.env.local` with your Supabase credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-public-key>
+DATABASE_URL=postgresql://postgres:<your-db-password>@db.<your-project-ref>.supabase.co:5432/postgres
+```
 
 | Variable | Where to find it |
 |---|---|
@@ -38,24 +40,25 @@ Edit `.env.local` with your Supabase credentials:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API → anon public key |
 | `DATABASE_URL` | Supabase → Settings → Database → Connection string (URI, port 5432) |
 
-### 3. Run database migrations
+### 3. Set up the database schema and seed data
+
+**Option A — If you have local terminal access:**
 
 ```bash
 npm run db:generate   # generate SQL from schema changes
 npm run db:migrate    # apply pending migrations to Supabase
+npm run db:seed       # populate starter topics, problems, and steps
 ```
 
-### 4. Seed the database with starter data
+**Option B — Manual via Supabase SQL Editor (no local tooling required):**
 
-```bash
-npm run db:seed
-```
+1. Open your Supabase project → **SQL Editor** → **New query**.
+2. Paste the entire contents of [`supabase/seed.sql`](supabase/seed.sql) into the editor.
+3. Click **Run**.
 
-This populates the database with realistic starter topics, problems, and problem steps
-(see [`scripts/seed.ts`](scripts/seed.ts) for the full data set). The script is
-idempotent — re-running it will not create duplicates.
+`supabase/seed.sql` is fully self-contained: it creates all tables (`CREATE TABLE IF NOT EXISTS`) and inserts the starter data in one go. It is **idempotent** — re-running it will not create duplicates (`ON CONFLICT DO NOTHING`).
 
-### 5. Run the development server
+### 4. Run the development server
 
 ```bash
 npm run dev
@@ -94,7 +97,12 @@ src/
 │   │       ├── attempts.ts
 │   │       ├── step-attempts.ts
 │   │       └── index.ts         # Barrel export
-│   ├── problems/mock-problems.ts# Mock data (dev-only)
+│   ├── problems/
+│   │   ├── map-step.ts          # Maps DB problem_steps row → ProblemStep
+│   │   ├── get-problems.ts      # getProblems() + getTopics() — DB-backed
+│   │   ├── get-problem-by-slug.ts # getProblemBySlug() — DB-backed
+│   │   ├── mock-problems.ts     # Mock data (kept for reference)
+│   │   └── solver.ts            # Validation + step-state logic
 │   ├── validation/schemas.ts    # Zod schemas
 │   └── utils.ts                 # cn() helper
 └── types/index.ts               # Shared TypeScript types
@@ -147,7 +155,10 @@ Always run `npm run build` before and after your changes. Fix all TypeScript err
 
 ## Current Status
 
-This is **v0** — a fully scaffolded UI foundation with mock data. Auth, database connectivity, and interactive submission logic are coming in v1.
+Problems and topics are now loaded from the real Supabase database.
+The `/problems` and `/problems/[slug]` routes are server-rendered on demand and
+require `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+to be set in `.env.local`.
 
 See `docs/current-priority.md` for the active build plan.
 

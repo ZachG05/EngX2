@@ -1,9 +1,16 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { ProblemCard } from "@/components/problems/ProblemCard";
-import { mockProblems, mockTopics } from "@/lib/problems/mock-problems";
+import { getProblems, getTopics } from "@/lib/problems/get-problems";
 import { Button } from "@/components/ui/button";
 
-export default function ProblemsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ProblemsPage() {
+  const [allProblems, allTopics] = await Promise.all([
+    getProblems(),
+    getTopics(),
+  ]);
+
   return (
     <PageContainer maxWidth="xl">
       <div className="mb-8">
@@ -18,7 +25,7 @@ export default function ProblemsPage() {
         <Button variant="secondary" size="sm">
           All Topics
         </Button>
-        {mockTopics.map((topic) => (
+        {allTopics.map((topic) => (
           <Button key={topic.id} variant="outline" size="sm">
             {topic.name}
           </Button>
@@ -26,15 +33,17 @@ export default function ProblemsPage() {
       </div>
 
       {/* Problems grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {mockProblems.map((problem) => (
-          <ProblemCard key={problem.id} problem={problem} />
-        ))}
-      </div>
-
-      <p className="mt-8 text-center text-sm text-muted-foreground">
-        More problems coming soon. This is currently displaying mock data.
-      </p>
+      {allProblems.length === 0 ? (
+        <p className="text-center text-muted-foreground py-16">
+          No problems available yet. Check back soon!
+        </p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {allProblems.map((problem) => (
+            <ProblemCard key={problem.id} problem={problem} />
+          ))}
+        </div>
+      )}
     </PageContainer>
   );
 }
