@@ -5,9 +5,79 @@
 -- "Run" to populate your database with starter topics, problems,
 -- and problem steps.
 --
--- The script is idempotent: ON CONFLICT DO NOTHING ensures it is
--- safe to re-run without creating duplicate rows.
+-- The script is idempotent:
+--   • CREATE TABLE IF NOT EXISTS — safe to re-run on an existing DB.
+--   • ON CONFLICT DO NOTHING    — safe to re-run without duplicates.
 -- ============================================================
+
+-- ---------------------------------------------------------------------------
+-- Schema (tables)
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     text        NOT NULL UNIQUE,
+  display_name text       NOT NULL,
+  email       text        NOT NULL UNIQUE,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS topics (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        text        NOT NULL,
+  slug        text        NOT NULL UNIQUE,
+  description text,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS problems (
+  id             uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug           text        NOT NULL UNIQUE,
+  title          text        NOT NULL,
+  description    text        NOT NULL,
+  difficulty     text        NOT NULL,
+  topic_id       uuid        REFERENCES topics (id),
+  estimated_time integer     NOT NULL DEFAULT 15,
+  published      boolean     NOT NULL DEFAULT false,
+  created_at     timestamptz NOT NULL DEFAULT now(),
+  updated_at     timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS problem_steps (
+  id             uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  problem_id     uuid        NOT NULL REFERENCES problems (id) ON DELETE CASCADE,
+  step_order     integer     NOT NULL,
+  prompt         text        NOT NULL,
+  type           text        NOT NULL,
+  correct_answer text        NOT NULL,
+  tolerance      real,
+  unit           text,
+  hint           text,
+  explanation    text,
+  options        json,
+  created_at     timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS attempts (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id      text        NOT NULL,
+  problem_id   uuid        NOT NULL REFERENCES problems (id),
+  completed    boolean     NOT NULL DEFAULT false,
+  score        integer     NOT NULL DEFAULT 0,
+  started_at   timestamptz NOT NULL DEFAULT now(),
+  completed_at timestamptz
+);
+
+CREATE TABLE IF NOT EXISTS step_attempts (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  attempt_id   uuid        NOT NULL REFERENCES attempts (id) ON DELETE CASCADE,
+  step_id      uuid        NOT NULL REFERENCES problem_steps (id),
+  answer       text        NOT NULL,
+  correct      boolean     NOT NULL DEFAULT false,
+  hints_used   integer     NOT NULL DEFAULT 0,
+  submitted_at timestamptz NOT NULL DEFAULT now()
+);
 
 -- ---------------------------------------------------------------------------
 -- Topics
