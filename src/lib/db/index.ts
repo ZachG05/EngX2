@@ -1,11 +1,11 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { env } from "@/lib/env";
+import { serverEnv } from "@/lib/env.server";
 import * as schema from "./schema";
 
 // In development without POSTGRES_URL, fall back to a local dev connection.
 const connectionString =
-  env.POSTGRES_URL.trim() !== "" ? env.POSTGRES_URL : "postgres://localhost:5432/engx_dev";
+  serverEnv.POSTGRES_URL.trim() !== "" ? serverEnv.POSTGRES_URL : "postgres://localhost:5432/engx_dev";
 
 const client = postgres(connectionString, {
   max: 1,
