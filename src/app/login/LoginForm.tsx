@@ -10,19 +10,25 @@ import { createSupabaseBrowserClient } from "@/lib/auth/client";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [oauthError, setOauthError] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const hasError = searchParams.get("error") === "auth";
 
   async function signInWith(provider: "google" | "github") {
     setLoading(provider);
+    setOauthError(null);
     const supabase = createSupabaseBrowserClient();
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    // Browser will redirect — no need to reset loading state
+    if (error) {
+      setOauthError("Unable to connect to the authentication provider. Please try again.");
+      setLoading(null);
+    }
+    // On success the browser redirects — no need to reset loading state
   }
 
   return (
@@ -39,6 +45,11 @@ export default function LoginForm() {
           {hasError && (
             <p className="rounded-md bg-destructive/10 px-3 py-2 text-center text-sm text-destructive">
               Sign-in failed. Please try again.
+            </p>
+          )}
+          {oauthError && (
+            <p className="rounded-md bg-destructive/10 px-3 py-2 text-center text-sm text-destructive">
+              {oauthError}
             </p>
           )}
 
