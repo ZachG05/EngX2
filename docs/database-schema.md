@@ -105,7 +105,7 @@ Individual step answers within an attempt.
 
 Starter data is available in two forms:
 
-- **`scripts/seed.ts`** — TypeScript seed script, run via `npm run db:seed` (requires `DATABASE_URL`).
+- **`scripts/seed.ts`** — TypeScript seed script, run via `npm run db:seed` (requires `POSTGRES_URL`).
 - **`supabase/seed.sql`** — Plain SQL file you can paste directly into the **Supabase SQL Editor** and run without any local tooling.
 
 ### Seeded topics

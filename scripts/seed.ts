@@ -11,14 +11,14 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { topics, problems, problemSteps } from "../src/lib/db/schema/index";
 
-const DATABASE_URL = process.env.DATABASE_URL;
-if (!DATABASE_URL) {
-  console.error("ERROR: DATABASE_URL environment variable is not set.");
-  console.error("Copy .env.example to .env.local and fill in your Supabase credentials.");
+const POSTGRES_URL = process.env.POSTGRES_URL;
+if (!POSTGRES_URL) {
+  console.error("ERROR: POSTGRES_URL environment variable is not set.");
+  console.error("Copy .env.example to .env.local and fill in your Supabase/Postgres credentials.");
   process.exit(1);
 }
 
-const client = postgres(DATABASE_URL, { max: 1 });
+const client = postgres(POSTGRES_URL, { max: 1 });
 const db = drizzle(client);
 
 // ---------------------------------------------------------------------------
