@@ -1,15 +1,13 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { env } from "@/lib/env";
 import * as schema from "./schema";
 
-const connectionString = process.env.DATABASE_URL;
+// In development without DATABASE_URL, fall back to a local dev connection.
+const connectionString =
+  env.DATABASE_URL.trim() !== "" ? env.DATABASE_URL : "postgres://localhost:5432/engx_dev";
 
-if (!connectionString && process.env.NODE_ENV === "production") {
-  throw new Error("DATABASE_URL environment variable is required");
-}
-
-// Use a dummy connection string in development if DATABASE_URL is not set
-const client = postgres(connectionString ?? "postgres://localhost:5432/engx_dev", {
+const client = postgres(connectionString, {
   max: 1,
   onnotice: () => {},
 });

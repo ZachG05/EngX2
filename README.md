@@ -30,9 +30,22 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` and fill in your Supabase project URL, anon key, and database URL.
+Edit `.env.local` with your Supabase credentials:
 
-### 3. Run the development server
+| Variable | Where to find it |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API → Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API → anon public key |
+| `DATABASE_URL` | Supabase → Settings → Database → Connection string (URI, port 5432) |
+
+### 3. Run database migrations
+
+```bash
+npm run db:generate   # generate SQL from schema changes
+npm run db:migrate    # apply pending migrations to Supabase
+```
+
+### 4. Run the development server
 
 ```bash
 npm run dev
@@ -58,8 +71,19 @@ src/
 │   ├── dashboard/               # StatCard
 │   └── marketing/               # HeroSection
 ├── lib/
-│   ├── auth/supabase.ts         # Supabase client
+│   ├── auth/supabase.ts         # Supabase browser client
+│   ├── env.ts                   # Centralised env variable validation
 │   ├── db/                      # Drizzle schema + client
+│   │   ├── index.ts             # Drizzle db instance + barrel re-export
+│   │   ├── schema.ts            # Backwards-compat re-export (→ schema/)
+│   │   └── schema/              # Modular schema definitions
+│   │       ├── profiles.ts
+│   │       ├── topics.ts
+│   │       ├── problems.ts
+│   │       ├── problem-steps.ts
+│   │       ├── attempts.ts
+│   │       ├── step-attempts.ts
+│   │       └── index.ts         # Barrel export
 │   ├── problems/mock-problems.ts# Mock data (dev-only)
 │   ├── validation/schemas.ts    # Zod schemas
 │   └── utils.ts                 # cn() helper
