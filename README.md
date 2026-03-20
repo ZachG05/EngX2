@@ -45,7 +45,17 @@ npm run db:generate   # generate SQL from schema changes
 npm run db:migrate    # apply pending migrations to Supabase
 ```
 
-### 4. Run the development server
+### 4. Seed the database with starter data
+
+```bash
+npm run db:seed
+```
+
+This populates the database with realistic starter topics, problems, and problem steps
+(see [`scripts/seed.ts`](scripts/seed.ts) for the full data set). The script is
+idempotent — re-running it will not create duplicates.
+
+### 5. Run the development server
 
 ```bash
 npm run dev
@@ -99,6 +109,7 @@ npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run db:generate  # Generate Drizzle migrations
 npm run db:migrate   # Run pending migrations
+npm run db:seed      # Seed starter topics, problems, and steps
 npm run db:studio    # Open Drizzle Studio (DB GUI)
 ```
 
