@@ -17,5 +17,5 @@ export const env = {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
 
   // Database — server-side only
-  DATABASE_URL: requireEnv("DATABASE_URL"),
+  POSTGRES_URL: requireEnv("POSTGRES_URL"),
 } as const;

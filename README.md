@@ -31,14 +31,34 @@ Create `.env.local` in the project root with your Supabase credentials:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-public-key>
-DATABASE_URL=postgresql://postgres:<your-db-password>@db.<your-project-ref>.supabase.co:5432/postgres
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_ANON_KEY=<your-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+SUPABASE_JWT_SECRET=<your-jwt-secret>
+POSTGRES_URL=<pooled-connection-string>
+POSTGRES_PRISMA_URL=<prisma-connection-string>
+POSTGRES_URL_NON_POOLING=<direct-connection-string>
+POSTGRES_USER=<db-user>
+POSTGRES_HOST=<db-host>
+POSTGRES_PASSWORD=<db-password>
+POSTGRES_DATABASE=<db-name>
 ```
 
 | Variable | Where to find it |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API → Project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API → anon public key |
-| `DATABASE_URL` | Supabase → Settings → Database → Connection string (URI, port 5432) |
+| `SUPABASE_URL` | Supabase → Settings → API → Project URL |
+| `SUPABASE_ANON_KEY` | Supabase → Settings → API → anon public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API → service_role key |
+| `SUPABASE_JWT_SECRET` | Supabase → Settings → API → JWT Secret |
+| `POSTGRES_URL` | Supabase → Settings → Database → Connection pooling URI |
+| `POSTGRES_PRISMA_URL` | Supabase → Settings → Database → Connection pooling URI (add `?pgbouncer=true`) |
+| `POSTGRES_URL_NON_POOLING` | Supabase → Settings → Database → Direct connection URI |
+| `POSTGRES_USER` | Supabase → Settings → Database → User |
+| `POSTGRES_HOST` | Supabase → Settings → Database → Host |
+| `POSTGRES_PASSWORD` | Supabase → Settings → Database → Password |
+| `POSTGRES_DATABASE` | Supabase → Settings → Database → Database name |
 
 ### 3. Set up the database schema and seed data
 
@@ -157,7 +177,7 @@ Always run `npm run build` before and after your changes. Fix all TypeScript err
 
 Problems and topics are now loaded from the real Supabase database.
 The `/problems` and `/problems/[slug]` routes are server-rendered on demand and
-require `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+require `POSTGRES_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 to be set in `.env.local`.
 
 See `docs/current-priority.md` for the active build plan.
