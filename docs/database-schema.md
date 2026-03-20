@@ -98,3 +98,34 @@ Individual step answers within an attempt.
 | correct | boolean | Whether the answer was correct |
 | hints_used | integer | How many times hint was revealed |
 | submitted_at | timestamp | Auto-set |
+
+---
+
+## Seed Data
+
+Starter data lives in `scripts/seed.ts` and is run via `npm run db:seed`.
+
+### Seeded topics
+
+| slug | name |
+|---|---|
+| `statics` | Statics |
+| `dynamics` | Dynamics |
+| `circuits` | Circuits |
+
+### Seeded problems
+
+| slug | topic | difficulty | steps |
+|---|---|---|---|
+| `concurrent-forces-equilibrium` | Statics | easy | 4 |
+| `simply-supported-beam-udl` | Statics | medium | 8 |
+| `truss-method-of-joints` | Statics | hard | 6 |
+| `projectile-cliff-launch` | Dynamics | easy | 4 |
+| `newtons-second-law-incline` | Dynamics | easy | 3 |
+| `ohms-law-series-circuit` | Circuits | easy | 4 |
+| `rc-circuit-charging` | Circuits | medium | 4 |
+
+All seeded problems are published (`published = true`) and ready for browsing.
+
+The seed script is **idempotent** — it uses `ON CONFLICT DO NOTHING` so re-running
+it never creates duplicate rows.
