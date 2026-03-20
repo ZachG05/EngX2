@@ -1,6 +1,8 @@
 # EngX v2 — Database Schema
 
-All tables are defined in `src/lib/db/schema.ts` using Drizzle ORM with PostgreSQL (Supabase).
+Tables are defined in `src/lib/db/schema/` using Drizzle ORM with PostgreSQL (Supabase).
+Each domain has its own module; `src/lib/db/schema/index.ts` re-exports everything.
+`src/lib/db/schema.ts` is a thin backward-compatibility re-export — prefer importing from `@/lib/db`.
 
 ## Tables
 
