@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/marketing/HeroSection";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockProblems, mockTopics } from "@/lib/problems/mock-problems";
+import { getProblems, getTopics } from "@/lib/problems/get-problems";
 import { ProblemCard } from "@/components/problems/ProblemCard";
 
 const features = [
@@ -31,7 +31,12 @@ const features = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [problemList, topicList] = await Promise.all([
+    getProblems(),
+    getTopics(),
+  ]);
+
   return (
     <>
       <PageContainer maxWidth="2xl" className="px-4 md:px-6">
@@ -58,29 +63,33 @@ export default function HomePage() {
         </section>
 
         {/* Topics */}
-        <section className="py-8">
-          <h2 className="mb-6 text-xl font-bold">Topics Available</h2>
-          <div className="flex flex-wrap gap-2">
-            {mockTopics.map((topic) => (
-              <span
-                key={topic.id}
-                className="rounded-full border border-border/40 bg-muted/40 px-3 py-1 text-sm text-muted-foreground"
-              >
-                {topic.name}
-              </span>
-            ))}
-          </div>
-        </section>
+        {topicList.length > 0 && (
+          <section className="py-8">
+            <h2 className="mb-6 text-xl font-bold">Topics Available</h2>
+            <div className="flex flex-wrap gap-2">
+              {topicList.map((topic) => (
+                <span
+                  key={topic.id}
+                  className="rounded-full border border-border/40 bg-muted/40 px-3 py-1 text-sm text-muted-foreground"
+                >
+                  {topic.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Sample problems */}
-        <section className="py-8">
-          <h2 className="mb-6 text-xl font-bold">Featured Problems</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {mockProblems.map((problem) => (
-              <ProblemCard key={problem.id} problem={problem} />
-            ))}
-          </div>
-        </section>
+        {/* Featured problems */}
+        {problemList.length > 0 && (
+          <section className="py-8">
+            <h2 className="mb-6 text-xl font-bold">Featured Problems</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {problemList.slice(0, 3).map((problem) => (
+                <ProblemCard key={problem.id} problem={problem} />
+              ))}
+            </div>
+          </section>
+        )}
       </PageContainer>
     </>
   );

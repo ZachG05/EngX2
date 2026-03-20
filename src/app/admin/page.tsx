@@ -3,7 +3,7 @@ import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { mockProblems } from "@/lib/problems/mock-problems";
+import { getProblems } from "@/lib/problems/get-problems";
 
 const difficultyColors = {
   easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -11,7 +11,9 @@ const difficultyColors = {
   hard: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const problemList = await getProblems();
+
   return (
     <div className="flex min-h-[calc(100vh-56px)]">
       <DashboardSidebar activePath="/admin" />
@@ -25,29 +27,23 @@ export default function AdminPage() {
         </div>
 
         {/* Summary cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <div className="mb-8 grid gap-4 sm:grid-cols-2">
           <Card>
             <CardHeader className="pb-1">
-              <CardTitle className="text-sm text-muted-foreground">Total Problems</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">Published Problems</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{mockProblems.length}</p>
+              <p className="text-2xl font-bold">{problemList.length}</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-1">
-              <CardTitle className="text-sm text-muted-foreground">Published</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">Total Steps</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">0</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-1">
-              <CardTitle className="text-sm text-muted-foreground">Draft</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{mockProblems.length}</p>
+              <p className="text-2xl font-bold">
+                {problemList.reduce((sum, p) => sum + p.steps.length, 0)}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -58,28 +54,34 @@ export default function AdminPage() {
             <CardTitle className="text-base">Problem Library</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-border/40">
-              {mockProblems.map((problem) => (
-                <div
-                  key={problem.id}
-                  className="flex items-center gap-4 px-6 py-4"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{problem.title}</p>
-                    <p className="text-xs text-muted-foreground">{problem.topic} · {problem.steps.length} steps</p>
+            {problemList.length === 0 ? (
+              <p className="px-6 py-8 text-center text-sm text-muted-foreground">
+                No published problems yet.
+              </p>
+            ) : (
+              <div className="divide-y divide-border/40">
+                {problemList.map((problem) => (
+                  <div
+                    key={problem.id}
+                    className="flex items-center gap-4 px-6 py-4"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{problem.title}</p>
+                      <p className="text-xs text-muted-foreground">{problem.topic} · {problem.steps.length} steps</p>
+                    </div>
+                    <Badge variant="outline" className={difficultyColors[problem.difficulty]}>
+                      {problem.difficulty}
+                    </Badge>
+                    <Badge variant="outline" className="text-muted-foreground">
+                      Published
+                    </Badge>
+                    <Button variant="ghost" size="sm" disabled>
+                      Edit
+                    </Button>
                   </div>
-                  <Badge variant="outline" className={difficultyColors[problem.difficulty]}>
-                    {problem.difficulty}
-                  </Badge>
-                  <Badge variant="outline" className="text-muted-foreground">
-                    Draft
-                  </Badge>
-                  <Button variant="ghost" size="sm" disabled>
-                    Edit
-                  </Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

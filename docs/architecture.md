@@ -25,7 +25,9 @@ src/
 │   │   ├── index.ts             # Drizzle db client instance
 │   │   └── schema.ts            # All table definitions (profiles, problems, etc.)
 │   ├── problems/
-│   │   └── mock-problems.ts     # Mock Problem[] and Topic[] arrays (dev-only)
+│   │   ├── get-problems.ts      # getProblems() and getTopics() — DB-backed loaders
+│   │   ├── get-problem-by-slug.ts  # getProblemBySlug() — DB-backed loader
+│   │   └── solver.ts            # Client-side step validation & state helpers
 │   ├── validation/
 │   │   └── schemas.ts           # Zod schemas for Problem, ProblemStep, StepAnswer
 │   └── utils.ts                 # cn() utility for Tailwind class merging
@@ -40,8 +42,8 @@ src/
 | `/` | `app/page.tsx` | ✅ Live | Landing page with HeroSection |
 | `/login` | `app/login/page.tsx` | 🔲 UI only | Auth not wired yet |
 | `/dashboard` | `app/dashboard/page.tsx` | 🔲 Mock data | Shows mock stats |
-| `/problems` | `app/problems/page.tsx` | 🔲 Mock data | Browse + topic filter (UI only) |
-| `/problems/[slug]` | `app/problems/[slug]/page.tsx` | 🔲 Mock data | Step UI, no submission |
+| `/problems` | `app/problems/page.tsx` | ✅ DB backed | Browse + topic filter (UI only) |
+| `/problems/[slug]` | `app/problems/[slug]/page.tsx` | ✅ DB backed | Multi-step solver, client-side validation |
 | `/admin` | `app/admin/page.tsx` | 🔲 Mock data | Problem list for admins |
 
 ## Component Organization
@@ -65,8 +67,8 @@ All business logic lives in `src/lib/{feature}/` — never inside page or compon
 
 | Concern | Location | Example |
 |---|---|---|
-| Problem data (mock) | `src/lib/problems/mock-problems.ts` | `mockProblems`, `mockTopics` arrays |
-| Problem data (real) | `src/lib/problems/` (add new files here) | `getProblems()`, `getProblemBySlug()` |
+| Problem list loader | `src/lib/problems/get-problems.ts` | `getProblems()`, `getTopics()` |
+| Single problem loader | `src/lib/problems/get-problem-by-slug.ts` | `getProblemBySlug()` |
 | Auth helpers | `src/lib/auth/supabase.ts` | `createBrowserClient()` |
 
 ## DB Utilities Placement

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { ProblemSolver } from "@/components/problems";
-import { mockProblems } from "@/lib/problems/mock-problems";
+import { getProblemBySlug } from "@/lib/problems/get-problem-by-slug";
 
 interface ProblemPageProps {
   params: Promise<{ slug: string }>;
@@ -9,7 +9,7 @@ interface ProblemPageProps {
 
 export default async function ProblemPage({ params }: ProblemPageProps) {
   const { slug } = await params;
-  const problem = mockProblems.find((p) => p.slug === slug);
+  const problem = await getProblemBySlug(slug);
 
   if (!problem) {
     notFound();
@@ -21,8 +21,3 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
     </PageContainer>
   );
 }
-
-export async function generateStaticParams() {
-  return mockProblems.map((p) => ({ slug: p.slug }));
-}
-
